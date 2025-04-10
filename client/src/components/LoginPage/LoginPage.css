@@ -1,0 +1,178 @@
+/* LoginPage.css */
+
+/* Main container styles */
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* Left side - Image container */
+.login-image-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.login-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Right side - Login form container */
+.login-form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #2e3445 0%, #1a1f35 100%);
+}
+
+/* Paper component styling */
+.login-paper {
+  padding: 3rem 2rem;
+  border-radius: 16px !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+/* Form title and subtitle */
+.login-title {
+  font-weight: 600 !important;
+  color: #333;
+  margin-bottom: 0.5rem !important;
+  text-align: center;
+}
+
+.login-subtitle {
+  margin-bottom: 2rem !important;
+  text-align: center;
+  color: #666;
+}
+
+/* Form inputs */
+.login-input {
+  margin-bottom: 1rem !important;
+}
+
+.login-input .MuiOutlinedInput-root {
+  border-radius: 8px;
+}
+
+.login-input .MuiOutlinedInput-input {
+  padding: 14px;
+}
+
+/* Login options - forgot password */
+.login-options {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.forgot-password-link {
+  color: #2e7df3;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+
+.forgot-password-link:hover {
+  color: #1b5ec7;
+  text-decoration: underline;
+}
+
+/* Login button */
+.login-button {
+  padding: 12px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  font-size: 1rem !important;
+  background: linear-gradient(45deg, #2e7df3, #6ab1ec) !important;
+  box-shadow: 0 4px 12px rgba(46, 125, 243, 0.3) !important;
+  margin-bottom: 1.5rem !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(46, 125, 243, 0.4) !important;
+}
+
+/* Error message */
+.login-error {
+  margin-bottom: 1.5rem !important;
+  border-radius: 8px !important;
+}
+
+/* Sign up prompt */
+.signup-prompt {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.signup-link {
+  color: #2e7df3;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  transition: color 0.2s;
+}
+
+.signup-link:hover {
+  color: #1b5ec7;
+  text-decoration: underline;
+}
+
+/* Responsive styles */
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-image-container {
+    display: none;
+  }
+
+  .login-form-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 2rem 1rem;
+  }
+
+  .login-paper {
+    max-width: 100%;
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* Custom styling for Material UI components */
+.MuiInputLabel-root {
+  color: #666 !important;
+}
+
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #2e7df3 !important;
+}
+
+.MuiInputLabel-root.Mui-focused {
+  color: #2e7df3 !important;
+}
+
+/* Animation for form appearance */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-paper {
+  animation: fadeIn 0.5s ease-out;
+}
