@@ -21,17 +21,5 @@ type User struct {
 	Role          string             `json:"user_role"`
 }
 
-type Patient struct {
-	User         
-	Medical       []string           `json:"medical_history"`
-	DoctorID      primitive.ObjectID `json:"doctor_id"`
-	AdmissionDate *time.Time         `json:"admission_date"`
-	DischargeDate *time.Time         `json:"discharge_date"`
-}
-type Doctor struct {
-	User `bson:",inline"` // Embed the User struct
-	// Doctor-specific fields
-	Specialization string   `json:"specialization"`
-	Availability   []string `json:"availability"` // E.g., ["Monday", "Wednesday"]
-}
+
 
