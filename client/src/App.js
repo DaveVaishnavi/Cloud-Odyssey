@@ -8,6 +8,7 @@ import LogIn from "./pages/LogIn";
 import Register from "./pages/Register";
 import MasterService from "./pages/MasterService";
 import WorkerService from "./pages/WorkerService";
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   return (
@@ -16,8 +17,17 @@ function App() {
         <Route exact path="/" element={<Home />} />
         <Route exact path="/LogIn" element={<LogIn/>}/>
         <Route exact path="/Register" element={<Register/>}/>
-        <Route exact path="/MasterService" element={<MasterService/>}/>
-        <Route exact path="/WorkerService" element={<WorkerService/>} />
+        <Route path="/MasterService" element={
+          <ProtectedRoute allowedRoles={['Master']}>
+            <MasterService />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/WorkerService" element={
+          <ProtectedRoute allowedRoles={['Worker']}>
+            <WorkerService />
+          </ProtectedRoute>
+        } />
       </Routes>
     </Router>
   );
