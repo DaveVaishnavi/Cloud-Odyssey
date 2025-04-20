@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -49,10 +50,10 @@ import {
   Settings,
   People,
   DeveloperBoard,
-  Close
+  Close,
+  Logout
 } from "@mui/icons-material";
 import logoImage from "../assets/images/logo.png"; // Add your logo image
-import { NavLink } from "react-router-dom";
 
 // Chart components
 import {
@@ -72,6 +73,7 @@ import {
   Pie,
   Cell
 } from 'recharts';
+
 
 // Hide AppBar on scroll down
 function HideOnScroll(props) {
@@ -260,6 +262,20 @@ const MasterService = () => {
   const [jobStartTime, setJobStartTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [showNodeActivity, setShowNodeActivity] = useState(false);
+  const navigate = useNavigate();
+
+// Handle logout
+const handleLogout = () => {
+  // Any logout logic here (clear tokens, etc)
+  setSnackbarMessage('Successfully logged out');
+  setSnackbarSeverity('info');
+  setSnackbarOpen(true);
+
+  // Redirect to home route after a brief delay
+  setTimeout(() => {
+    navigate('/');
+  }, 1500);
+};
 
   // Simulated data update for dynamic effect
   useEffect(() => {
@@ -556,52 +572,69 @@ const MasterService = () => {
                 </NavLink>
               </Box>
 
-              <Box sx={{ display: 'flex', ml: 4 }}>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  sx={{
-                    mr: 2,
-                    transition: "all 0.3s ease"
-                  }}
-                  startIcon={<Settings />}
-                >
-                  Admin
-                </Button>
-                {isJobRunning ? (
-                  <Button
-                    variant="contained"
-                    color="error"
-                    sx={{
-                      boxShadow: '0 4px 12px rgba(211, 47, 47, 0.3)',
-                      transition: 'transform 0.3s, box-shadow 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-3px)',
-                        boxShadow: '0 8px 20px rgba(211, 47, 47, 0.6)'
-                      }
-                    }}
-                    onClick={handleCancelJob}
-                  >
-                    Cancel Job
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    sx={{
-                      background: 'linear-gradient(45deg, #2e7df3, #6ab1ec)',
-                      boxShadow: '0 4px 12px rgba(46, 125, 243, 0.3)',
-                      transition: 'transform 0.3s, box-shadow 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-3px)',
-                        boxShadow: '0 8px 20px rgba(46, 125, 243, 0.6)'
-                      }
-                    }}
-                    onClick={handleRequestResources}
-                  >
-                    Request Compute
-                  </Button>
-                )}
-              </Box>
+             <Box sx={{ display: 'flex', ml: 4 }}>
+  <Button
+    variant="outlined"
+    color="primary"
+    sx={{
+      mr: 2,
+      transition: "all 0.3s ease"
+    }}
+    startIcon={<Settings />}
+  >
+    Admin
+  </Button>
+
+  {isJobRunning ? (
+    <Button
+      variant="contained"
+      color="error"
+      sx={{
+        mr: 2,
+        boxShadow: '0 4px 12px rgba(211, 47, 47, 0.3)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'translateY(-3px)',
+          boxShadow: '0 8px 20px rgba(211, 47, 47, 0.6)'
+        }
+      }}
+      onClick={handleCancelJob}
+    >
+      Cancel Job
+    </Button>
+  ) : (
+    <Button
+      variant="contained"
+      sx={{
+        mr: 2,
+        background: 'linear-gradient(45deg, #2e7df3, #6ab1ec)',
+        boxShadow: '0 4px 12px rgba(46, 125, 243, 0.3)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'translateY(-3px)',
+          boxShadow: '0 8px 20px rgba(46, 125, 243, 0.6)'
+        }
+      }}
+      onClick={handleRequestResources}
+    >
+      Request Compute
+    </Button>
+  )}
+
+  <Button
+    variant="outlined"
+    color="error"
+    sx={{
+      ml: 'auto',
+      transition: "all 0.3s ease"
+    }}
+    startIcon={<Logout />}
+    onClick={handleLogout}
+  >
+    Logout
+  </Button>
+</Box>
+
             </Toolbar>
           </Container>
         </AppBar>

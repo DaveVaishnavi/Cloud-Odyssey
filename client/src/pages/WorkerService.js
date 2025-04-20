@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 // Add these imports at the top of your file alongside the other imports
 import {
   ErrorOutline,
@@ -59,10 +60,10 @@ import {
   Settings,
   People,
   DeveloperBoard,
-  Close
+  Close,
+  Logout
 } from "@mui/icons-material";
 import logoImage from "../assets/images/logo.png"; // Add your logo image
-import { NavLink } from "react-router-dom";
 
 // Chart components
 import {
@@ -454,7 +455,19 @@ const WorkerNodeDashboard = () => {
   const handleCloseSettings = () => {
     setOpenSettingsModal(false);
   };
+  // Handle logout
+const handleLogout = () => {
+  // Any logout logic here (clear tokens, etc)
+  setSnackbarMessage('Successfully logged out');
+  setSnackbarSeverity('info');
+  setSnackbarOpen(true);
 
+  // Redirect to home route after a brief delay
+  setTimeout(() => {
+    navigate('/');
+  }, 1500);
+};
+const navigate = useNavigate();
   // Handle snackbar close
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -603,52 +616,68 @@ const WorkerNodeDashboard = () => {
               </Box>
 
               <Box sx={{ display: 'flex', ml: 4 }}>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  sx={{
-                    mr: 2,
-                    transition: "all 0.3s ease"
-                  }}
-                  startIcon={<Settings />}
-                  onClick={handleOpenSettings}
-                >
-                  Options
-                </Button>
-                {isActive ? (
-                  <Button
-                    variant="contained"
-                    color="error"
-                    sx={{
-                      boxShadow: '0 4px 12px rgba(211, 47, 47, 0.3)',
-                      transition: 'transform 0.3s, box-shadow 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-3px)',
-                        boxShadow: '0 8px 20px rgba(211, 47, 47, 0.6)'
-                      }
-                    }}
-                    onClick={handleStopSharing}
-                  >
-                    Stop Sharing
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    sx={{
-                      background: 'linear-gradient(45deg, #2e7df3, #6ab1ec)',
-                      boxShadow: '0 4px 12px rgba(46, 125, 243, 0.3)',
-                      transition: 'transform 0.3s, box-shadow 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-3px)',
-                        boxShadow: '0 8px 20px rgba(46, 125, 243, 0.6)'
-                      }
-                    }}
-                    onClick={handleRentResources}
-                  >
-                    Rent Resources
-                  </Button>
-                )}
-              </Box>
+  <Button
+    variant="outlined"
+    color="primary"
+    sx={{
+      mr: 2,
+      transition: "all 0.3s ease"
+    }}
+    startIcon={<Settings />}
+    onClick={handleOpenSettings}
+  >
+    Options
+  </Button>
+
+  {isActive ? (
+    <Button
+      variant="contained"
+      color="error"
+      sx={{
+        mr: 2,
+        boxShadow: '0 4px 12px rgba(211, 47, 47, 0.3)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'translateY(-3px)',
+          boxShadow: '0 8px 20px rgba(211, 47, 47, 0.6)'
+        }
+      }}
+      onClick={handleStopSharing}
+    >
+      Stop Sharing
+    </Button>
+  ) : (
+    <Button
+      variant="contained"
+      sx={{
+        mr: 2,
+        background: 'linear-gradient(45deg, #2e7df3, #6ab1ec)',
+        boxShadow: '0 4px 12px rgba(46, 125, 243, 0.3)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+          transform: 'translateY(-3px)',
+          boxShadow: '0 8px 20px rgba(46, 125, 243, 0.6)'
+        }
+      }}
+      onClick={handleRentResources}
+    >
+      Rent Resources
+    </Button>
+  )}
+
+  <Button
+    variant="outlined"
+    color="error"
+    sx={{
+      ml: 'auto',
+      transition: "all 0.3s ease"
+    }}
+    startIcon={<Logout />}
+    onClick={handleLogout}
+  >
+    Logout
+  </Button>
+</Box>
             </Toolbar>
           </Container>
         </AppBar>
