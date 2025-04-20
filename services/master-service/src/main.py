@@ -2,13 +2,18 @@ from fastapi import FastAPI, UploadFile, WebSocket
 from fastapi.responses import JSONResponse
 import uuid
 
-from app.handlers.compiler import compile_code
-from app.handlers.runner import run_mpi
-from app.handlers.scheduler import get_worker_hosts
-from app.utils.file_ops import save_uploaded_file, get_paths
+from src.handlers.compiler import compile_code
+from src.handlers.runner import run_mpi
+from src.handlers.scheduler import get_worker_hosts
+from src.utils.file_ops import save_uploaded_file, get_paths
 
 app = FastAPI()
 
+@app.get("/")
+def submit():
+    return JSONResponse(content={
+        "message": "Master Service running..."
+    })
 
 @app.post("/submit/")
 async def submit(file: UploadFile):
