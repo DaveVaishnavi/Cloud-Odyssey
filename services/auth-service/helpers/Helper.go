@@ -20,40 +20,61 @@ type SignedDetails struct {
 	First_name string `json:"first_name"`
 	Last_name  string `json:"last_name"`
 	Uid        string `json:"uid"`
+	Role       string `json:"role"`
 	jwt.RegisteredClaims
 }
 
 var userCollection *mongo.Collection = database.OpenCollection(database.Client, "user")
 var SECRET_KEY string = os.Getenv("SECRET_KEY")
 
+// GenerateAllTokens generates both access and refresh JWT tokens
 func GenerateAllTokens(email string, firstName string, lastName string, uid string) (signedToken string, signedRefreshToken string) {
-	claims :=
-		&SignedDetails{
-			Email:      email,
-			First_name: firstName,
-			Last_name:  lastName,
-			Uid:        uid,
-			RegisteredClaims: jwt.RegisteredClaims{
-				ExpiresAt: jwt.NewNumericDate((time.Now().Add(24 * time.Hour))),
-			},
-		}
+	// Get user role from database
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	defer cancel()
 
-	refreshClaims := SignedDetails{
+	var user bson.M
+	err := userCollection.FindOne(ctx, bson.M{"user_id": uid}).Decode(&user)
+
+	// Default role if not found
+	role := "Guest"
+	if err == nil && user["role"] != nil {
+		role = user["role"].(string)
+	}
+
+	claims := &SignedDetails{
+		Email:      email,
+		First_name: firstName,
+		Last_name:  lastName,
+		Uid:        uid,
+		Role:       role,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate((time.Now().Add(24 * time.Hour))),
+		},
+	}
+
+	refreshClaims := &SignedDetails{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate((time.Now().Add(168 * time.Hour))),
 		},
 	}
+
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(SECRET_KEY))
 	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(SECRET_KEY))
+
 	if err != nil {
 		log.Panic(err)
 		return
 	}
+
 	return token, refreshToken
 }
 
+// UpdateAllTokens updates authentication tokens for a user
 func UpdateAllTokens(signedToken string, signedRefreshToken string, userId string) {
 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	defer cancel()
+
 	var updateObj primitive.D
 	updateObj = append(updateObj, bson.E{Key: "token", Value: signedToken})
 	updateObj = append(updateObj, bson.E{Key: "refresh_token", Value: signedRefreshToken})
@@ -66,6 +87,7 @@ func UpdateAllTokens(signedToken string, signedRefreshToken string, userId strin
 	opt := options.UpdateOptions{
 		Upsert: &upsert,
 	}
+
 	_, err := userCollection.UpdateOne(
 		ctx,
 		filter,
@@ -74,14 +96,14 @@ func UpdateAllTokens(signedToken string, signedRefreshToken string, userId strin
 		},
 		&opt,
 	)
-	defer cancel()
+
 	if err != nil {
 		log.Panic(err)
 		return
 	}
-	return
-
 }
+
+// ValidateToken validates the JWT token
 func ValidateToken(signedToken string) (claims *SignedDetails, msg string) {
 	token, err := jwt.ParseWithClaims(
 		signedToken,
@@ -90,18 +112,22 @@ func ValidateToken(signedToken string) (claims *SignedDetails, msg string) {
 			return []byte(SECRET_KEY), nil
 		},
 	)
+
+	if err != nil {
+		msg = err.Error()
+		return nil, msg
+	}
+
 	claims, ok := token.Claims.(*SignedDetails)
 	if !ok {
-		msg = fmt.Sprintf("the token is invalid")
-		msg = err.Error()
-		return
+		msg = fmt.Sprintf("The token is invalid")
+		return nil, msg
 	}
+
 	if claims.ExpiresAt.Time.Before(time.Now()) {
-		msg = fmt.Sprint("token is expired")
-		msg = err.Error()
-		return
-
+		msg = fmt.Sprint("Token is expired")
+		return nil, msg
 	}
-	return claims, msg
 
+	return claims, ""
 }

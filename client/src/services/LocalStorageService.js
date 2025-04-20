@@ -1,21 +1,21 @@
-const storeToken = (value) => {
-    if (value) {
-      console.log("Store Token")
-      const { access, refresh } = value
-      localStorage.setItem('access_token', access)
-      localStorage.setItem('refresh_token', refresh)
-    }
-  }
+// services/LocalStorageService.js
 
-  const getToken = () => {
-    let access_token = localStorage.getItem('access_token')
-    let refresh_token = localStorage.getItem('refresh_token')
-    return { access_token, refresh_token }
-  }
+// Store token in local storage
+const storeToken = (token) => {
+  localStorage.setItem('access_token', token);
+};
 
-  const removeToken = () => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-  }
+// Get token from local storage
+const getToken = () => {
+  const access_token = localStorage.getItem('access_token');
+  return {
+    access_token
+  };
+};
 
-  export { storeToken, getToken, removeToken }
+// Remove token from local storage
+const removeToken = () => {
+  localStorage.removeItem('access_token');
+};
+
+export { storeToken, getToken, removeToken };

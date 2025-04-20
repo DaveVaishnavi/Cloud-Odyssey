@@ -1,34 +1,40 @@
 package main
 
 import (
-	"cloud-project/database"
-	"cloud-project/middleware"
 	"cloud-project/routes"
+	"log"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/joho/godotenv"
 )
 
-var AppointmentConnection *mongo.Collection = database.OpenCollection(database.Client, "user")
-
 func main() {
+	if err := godotenv.Load(); err != nil {
+    log.Println("No .env file found. Proceeding without it.")
+}
+
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8000"
+		port = "8080"
 	}
+
 	router := gin.New()
 	router.Use(gin.Logger())
 
-	// Register public routes
-	routes.PublicUserRoutes(router)
+	// CORS configuration
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"}, // Update with your frontend URL
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "token"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
-	// Apply auth middleware for protected routes
-	protected := router.Group("/")
-	protected.Use(middleware.Authentication())
+	// Setup routes
+	routes.SetupRoutes(router)
 
-	// Register protected routes
-	routes.ProtectedUserRoutes(protected)
-
+	// Start server
 	router.Run(":" + port)
 }

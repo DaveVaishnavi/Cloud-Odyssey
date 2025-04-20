@@ -1,82 +1,107 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+// services/userAuthApi.js
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-// Define a service using a base URL and expected endpoints
 export const userAuthApi = createApi({
   reducerPath: 'userAuthApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://127.0.0.1:8000/api/user/' }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'http://localhost:8080',
+    prepareHeaders: (headers, { getState }) => {
+      // Get token from state if available
+      const token = getState().auth?.token?.access_token;
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    }
+  }),
   endpoints: (builder) => ({
+    // Register User
     registerUser: builder.mutation({
-      query: (user) => {
+      query: (userData) => {
         return {
-          url: 'register/',
+          url: 'api/auth/register',
           method: 'POST',
-          body: user,
+          body: userData,
           headers: {
-            'Content-type': 'application/json',
+            'Content-Type': 'application/json',
           }
         }
       }
     }),
+
+    // Login User
     loginUser: builder.mutation({
-      query: (user) => {
+      query: (userData) => {
         return {
-          url: 'login/',
+          url: 'api/auth/login',
           method: 'POST',
-          body: user,
+          body: userData,
           headers: {
-            'Content-type': 'application/json',
+            'Content-Type': 'application/json',
           }
         }
       }
     }),
-    getLoggedUser: builder.query({
-      query: (access_token) => {
+
+    // Get Current User (Protected Route)
+    getUser: builder.query({
+      query: (token) => {
         return {
-          url: 'profile/',
+          url: 'api/auth/me',
           method: 'GET',
           headers: {
-            'authorization': `Bearer ${access_token}`,
+            'Authorization': `Bearer ${token}`,
           }
         }
       }
     }),
-    changeUserPassword: builder.mutation({
-      query: ({ actualData, access_token }) => {
+
+    // Logout User (Protected Route)
+    logoutUser: builder.mutation({
+      query: (token) => {
         return {
-          url: 'changepassword/',
+          url: 'api/auth/logout',
           method: 'POST',
-          body: actualData,
           headers: {
-            'authorization': `Bearer ${access_token}`,
+            'Authorization': `Bearer ${token}`,
           }
         }
       }
     }),
-    sendPasswordResetEmail: builder.mutation({
-      query: (user) => {
+
+    // Get all users (Master only)
+    getAllUsers: builder.query({
+      query: (token) => {
         return {
-          url: 'send-reset-password-email/',
-          method: 'POST',
-          body: user,
+          url: 'api/users',
+          method: 'GET',
           headers: {
-            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`,
           }
         }
       }
     }),
-    resetPassword: builder.mutation({
-      query: ({ actualData, id, token }) => {
+
+    // Get specific user (Self or Master)
+    getUserById: builder.query({
+      query: ({token, userId}) => {
         return {
-          url: `/reset-password/${id}/${token}/`,
-          method: 'POST',
-          body: actualData,
+          url: `api/auth/${userId}`,
+          method: 'GET',
           headers: {
-            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`,
           }
         }
       }
     }),
   }),
-})
+});
 
-export const { useRegisterUserMutation, useLoginUserMutation, useGetLoggedUserQuery, useChangeUserPasswordMutation, useSendPasswordResetEmailMutation, useResetPasswordMutation } = userAuthApi
+export const {
+  useRegisterUserMutation,
+  useLoginUserMutation,
+  useGetUserQuery,
+  useLogoutUserMutation,
+  useGetAllUsersQuery,
+  useGetUserByIdQuery
+} = userAuthApi;

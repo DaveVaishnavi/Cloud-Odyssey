@@ -20,6 +20,9 @@ import { setUserToken } from "../features/authSlice";
 import logo from "../assets/images/login_image.png";
 import "../components/LoginPage/LoginPage.css";
 
+// Define the API base URL
+const API_BASE_URL = "http://localhost:8080";
+
 const UserLogin = () => {
   const [serverError, setServerError] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -40,27 +43,90 @@ const UserLogin = () => {
     };
 
     try {
-      const res = await loginUser(actualData);
-      if (res.error) {
-        setServerError(res.error.data.errors);
+      // Use the full backend URL for the login endpoint
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(actualData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({
+          errors: { non_field_errors: ["Login failed"] }
+        }));
+        setServerError(errorData.errors || { non_field_errors: ["Login failed"] });
+        return;
       }
-      if (res.data) {
-        storeToken(res.data.token);
-        let { access_token } = getToken();
-        dispatch(setUserToken({ access_token }));
-        navigate("/Portfolio");
+
+      const data = await response.json();
+
+      // Store token in local storage
+      storeToken(data.token);
+
+      // Store user role and other relevant data
+      localStorage.setItem("userRole", data.role);
+      localStorage.setItem("userId", data.id);
+      localStorage.setItem("userEmail", data.email);
+      localStorage.setItem("firstName", data.first_name);
+      localStorage.setItem("lastName", data.last_name);
+
+      // Update auth state in Redux
+      dispatch(setUserToken({ access_token: data.token }));
+
+      // Redirect based on role
+      console.log(data.role);
+      if (data.role === "Master") {
+        navigate("/MasterService");
+      } else if (data.role === "Worker") {
+        navigate("/WorkerService");
+      } else {
+        navigate("/MasterService"); // Default route for Guest
       }
     } catch (error) {
       console.error("Login error:", error);
+      setServerError({ non_field_errors: ["An unexpected error occurred"] });
     }
   };
 
-  let { access_token } = getToken();
+  // Check for existing token and redirect if already logged in
   useEffect(() => {
+    const { access_token } = getToken();
     if (access_token) {
-      dispatch(setUserToken({ access_token }));
+      // Verify the token is valid by making a request to the backend
+      fetch(`${API_BASE_URL}/api/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Invalid token');
+      })
+      .then(userData => {
+        // Update Redux state with token
+        dispatch(setUserToken({ access_token }));
+
+        // Redirect based on role
+        const userRole = localStorage.getItem("userRole") || userData.role;
+        if (userRole === "Master") {
+          navigate("/MasterService");
+        } else if (userRole === "Worker") {
+          navigate("/WorkerService");
+        } else {
+          navigate("/Portfolio");
+        }
+      })
+      .catch(error => {
+        console.error("Token verification failed:", error);
+        // Clear invalid token
+        localStorage.clear();
+      });
     }
-  }, [access_token, dispatch]);
+  }, [dispatch, navigate]);
 
   return (
     <div className="login-container">
@@ -155,7 +221,7 @@ const UserLogin = () => {
 
             <Box className="signup-prompt">
               <Typography variant="body2">
-                Don't have an account?
+                Don't have an account?{" "}
                 <NavLink to="/register" className="signup-link">
                   Sign Up
                 </NavLink>
