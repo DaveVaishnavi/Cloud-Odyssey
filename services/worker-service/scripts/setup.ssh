@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -z "$MASTER_USER" ] || [ -z "$MASTER_HOST" ] || [ -z "$REMOTE_PORT" ] || [ -z "$LOCAL_PORT" ]; then
+  echo "Missing environment variables."
+  exit 1
+fi
+
+ssh -N -R "$REMOTE_PORT":localhost:"$LOCAL_PORT" "$MASTER_USER"@"$MASTER_HOST" -o StrictHostKeyChecking=no
