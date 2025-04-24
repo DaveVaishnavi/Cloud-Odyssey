@@ -1,131 +1,90 @@
-# 🛡️ Auth Microservice - README
+# 🔐 Authentication Service - Cloud Odyssey
 
-This microservice provides user authentication and user data management using **Gin (Go)** and **MongoDB**, designed as part of a **microservices architecture**.
+## 📄 Overview
 
----
-
-## 🌐 Public Routes
-
-Accessible without authentication.
-
-### `POST /auth/register`
-
-Registers a new user.
-
-**Request Body:**
-
-```json
-{
-  "first_name": "John",
-  "last_name": "Doe",
-  "email": "john@example.com",
-  "password": "yourpassword",
-  "phone": "1234567890"
-}
-```
-
-**Response:**
-
-- 201 Created on success
-- 400/500 on validation or server error
+The Authentication Service is responsible for handling user registration, login, token management (JWT), and role-based
+access control for Cloud Odyssey. It enables secure interactions between users and other microservices.
 
 ---
 
-### `POST /auth/login`
+## 🚀 Features
 
-Logs in a user and returns **access and refresh tokens**.
+- User registration and login
+- JWT-based session management
+- Role-based access control (Master, Worker, etc.)
+- Middleware-protected routes
+- User profile retrieval
 
-**Request Body:**
+---
 
-```json
-{
-  "email": "john@example.com",
-  "password": "yourpassword"
-}
-```
+## 📦 Tech Stack
 
-**Response:**
+- **Language**: Go
+- **Framework**: Gin
+- **Authentication**: JWT
+- **Middleware**: Custom Role-based Access Control
 
-```json
-{
-  "token": "<JWT access token>",
-  "refresh_token": "<refresh token>"
-}
+---
+
+## 🔧 Setup Instructions
+
+```bash
+go run main.go
 ```
 
 ---
 
-## 🔐 Protected Routes
+## 📡 API Endpoints
 
-Require JWT authentication (use middleware).
+### Public Routes
 
-### `GET /auth/:_id`
+| Method | Endpoint              | Description |
+|--------|------------------------|-------------|
+| `POST` | `/api/auth/register`   | Register a new user account |
+| `POST` | `/api/auth/login`      | Login and receive JWT token |
 
-Get user details by MongoDB `_id`.
+### Protected Routes (require token)
 
-**URL Parameter:**
+| Method | Endpoint             | Description |
+|--------|-----------------------|-------------|
+| `GET`  | `/api/auth/me`        | Get current user's profile |
+| `POST` | `/api/auth/logout`    | Logout current user |
+| `GET`  | `/api/auth/:_id`      | Get user by ID (self or Master only) |
 
-- `_id`: MongoDB ObjectId (e.g., `607f1f77bcf86cd799439011`)
+### Admin-Only (Master Role)
 
-**Response:**
-
-```json
-{
-  "_id": "...",
-  "first_name": "...",
-  "last_name": "...",
-  "email": "...",
-  ...
-}
-```
-
-**Error Example:**
-
-```json
-{
-  "error": "User not found",
-  "details": "mongo: no documents in result"
-}
-```
+| Method | Endpoint       | Description |
+|--------|----------------|-------------|
+| `GET`  | `/api/users`   | List all users |
 
 ---
 
-### `POST /auth/logout`
+## 🔐 Example JWT Header
 
-Logs the user out by invalidating their refresh token.
-
-**Response:**
-
-- 200 OK on success
-
----
-
-## 🛠 Implementation Notes
-
-- Ensure `_id` is treated as `primitive.ObjectID` when querying MongoDB:
-  ```go
-  objID, err := primitive.ObjectIDFromHex(userId)
-  ```
-- Use `userCollection.FindOne(ctx, bson.M{"_id": objID})` for accurate queries.
-- Use middleware to protect routes:
-  ```go
-  router.Use(AuthMiddleware())
-  ```
-
----
-
-## 📂 Project Structure
-
-```
-├── controllers
-│   └── authController.go
-├── routes
-│   └── authRoutes.go
-├── models
-│   └── user.go
-├── middleware
-│   └── authMiddleware.go
-├── main.go
+```http
+Authorization: Bearer <token>
+Content-Type: application/json
 ```
 
 ---
+
+## 📂 File Structure
+
+```
+routes/            # Route definitions
+controllers/       # Business logic handlers
+middleware/        # Auth middleware and role guards
+main.go            # Server entry point
+```
+
+---
+
+## ✨ Maintainers
+
+- Vaishnavi Virat Dave
+- Kaashvi Jain
+- Kajal
+- Kumud
+- Abhijna Raghavendra
+- Anushka Jangid
+
