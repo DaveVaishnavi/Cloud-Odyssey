@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useRef } from 'react';
 import { NavLink } from "react-router-dom";
 import {
   Container,
@@ -51,32 +52,32 @@ import person from "../assets/images/person.png"
 const teamMembers = [
   {
     name: "Vaishnavi",
-    image: `url(${person})`,
+    image: person,
     linkedin: "https://linkedin.com/in/vaishnavi-dave-a4b903233"
   },
   {
     name: "Abhijna",
-    image: `url(${person})`,
+    image: person,
     linkedin: "https://linkedin.com/in/sarahjohnson"
   },
   {
     name: "Kaashvi",
-    image:`url(${person})`,
+    image:person,
     linkedin: "https://linkedin.com/in/michaellopez"
   },
   {
     name: "Kajal",
-    image: `url(${person})`,
+    image: person,
     linkedin: "https://linkedin.com/in/jessicapark"
   },
   {
     name: "Kumud",
-    image: `url(${person})`,
+    image: person,
     linkedin: "https://linkedin.com/in/davidwilson"
   },
   {
     name: "Anushka",
-    image:`url(${person})`,
+    image:person,
     linkedin: "https://linkedin.com/in/emilyrodriguez"
   }
 ];
@@ -194,7 +195,6 @@ const AboutModal = ({ open, handleClose }) => {
                 >
                   <Avatar
                     src={member.image}
-                    alt={member.name}
                     sx={{
                       width: 140,
                       height: 140,
@@ -429,6 +429,8 @@ const StatItem = ({ value, label }) => {
 
 const HomePage = () => {
   // State for About modal
+  const featuresRef = useRef(null);
+  const introRef = useRef(null);
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
 
   // Modal handlers
@@ -440,8 +442,8 @@ const HomePage = () => {
 
   // Navigation items with About link handler
   const navItems = [
-    { label: 'Home', path: '/' },
-    { label: 'Features', path: '/features' },
+    { label: 'Home', onClick: () => introRef.current?.scrollIntoView({ behavior: 'smooth' }) },
+    { label: 'Features', onClick: () => featuresRef.current?.scrollIntoView({ behavior: 'smooth' }) },
     { label: 'Docs', path: '/documentation' },
     { label: 'Team', path: '#', onClick: handleOpenAboutModal }
   ];
@@ -678,7 +680,7 @@ const HomePage = () => {
       <AboutModal open={aboutModalOpen} handleClose={handleCloseAboutModal} />
 
       {/* Hero Section */}
-      <Box
+      <Box ref={introRef}
         sx={{
           position: "relative",
           height: "90vh",
@@ -852,7 +854,7 @@ const HomePage = () => {
       </Box>
 
       {/* Key Features */}
-      <Box sx={{ py: 8 }}>
+      <Box ref={featuresRef} sx={{ py: 8 }}>
         <Container>
           <Box sx={{ textAlign: 'center', mb: 6 }}>
             <Typography

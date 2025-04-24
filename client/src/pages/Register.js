@@ -142,7 +142,7 @@ const Registration = () => {
 
           <Box component="form" noValidate onSubmit={handleSubmit} className="login-form">
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid item size={{xs:12}}>
                 <TextField
                   required
                   fullWidth
@@ -169,7 +169,7 @@ const Registration = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item size={{xs:12}}>
                 <TextField
                   required
                   fullWidth
@@ -190,7 +190,7 @@ const Registration = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item size={{xs:12}}>
                 <TextField
                   required
                   fullWidth
@@ -211,7 +211,7 @@ const Registration = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item size={{xs:12}}>
                 <FormControl fullWidth className="login-input">
                   <InputLabel id="role-label">User Role</InputLabel>
                   <Select
@@ -235,7 +235,7 @@ const Registration = () => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item size={{xs:12}}>
                 <TextField
                   required
                   fullWidth
@@ -268,7 +268,7 @@ const Registration = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item size={{xs:12}}>
                 <TextField
                   required
                   fullWidth
@@ -301,7 +301,7 @@ const Registration = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item size={{xs:12}}>
                 <FormControlLabel
                   control={<Checkbox value={true} color="primary" name="tc" id="tc" />}
                   label="I agree to terms and conditions"

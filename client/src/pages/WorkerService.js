@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 // Add these imports at the top of your file alongside the other imports
 import {
@@ -38,6 +38,12 @@ import {
   useTheme,
   LinearProgress
 } from "@mui/material";
+import MenuIcon from '@mui/icons-material/Menu';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import {
   Speed,
   Security,
@@ -294,6 +300,8 @@ const WorkerNodeDashboard = () => {
   const [uptime, setUptime] = useState(0);
   const [safeThreshold, setSafeThreshold] = useState({ cpu: 80, memory: 85, storage: 90 });
   const [warnings, setWarnings] = useState([]);
+  const performRef = useRef(null);
+  const earnRef = useRef(null);
 
   // State for modals and dialogs
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
@@ -301,6 +309,14 @@ const WorkerNodeDashboard = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+
+  // State for mobile drawer
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const navItems = [
+    { label: 'Dashboard', path: '/WorkerService' },
+    { label: 'Earnings', onClick: () => earnRef.current?.scrollIntoView({ behavior: 'smooth' }) },
+    { label: 'Performance', onClick: () => performRef.current?.scrollIntoView({ behavior: 'smooth' }) }
+  ];
 
   // Simulated data update for dynamic effect
   useEffect(() => {
@@ -558,65 +574,54 @@ const navigate = useNavigate();
                 </Typography>
               </Box>
 
-              <Box sx={{ display: 'flex', gap: 3 }}>
-                <NavLink to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontWeight: 700,
-                      color: 'primary.main',
-                      transition: "all 0.3s ease"
-                    }}
-                  >
-                    Dashboard
-                  </Typography>
-                </NavLink>
-                <NavLink to="/earnings" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontWeight: 500,
-                      transition: "all 0.3s ease",
-                      '&:hover': {
-                        color: 'primary.main'
-                      }
-                    }}
-                  >
-                    Earnings
-                  </Typography>
-                </NavLink>
-                <NavLink to="/performance" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontWeight: 500,
-                      transition: "all 0.3s ease",
-                      '&:hover': {
-                        color: 'primary.main'
-                      }
-                    }}
-                  >
-                    Performance
-                  </Typography>
-                </NavLink>
-                <NavLink to="/settings" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontWeight: 500,
-                      transition: "all 0.3s ease",
-                      '&:hover': {
-                        color: 'primary.main'
-                      }
-                    }}
-                  >
-                    Settings
-                  </Typography>
-                </NavLink>
+              {/* Desktop Nav Links */}
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
+                {navItems.map((item) => (
+                  <Box key={item.label}>
+                    {item.onClick ? (
+                      // If there's an onClick property, render a button that looks like a link
+                      <Typography
+                        variant="body1"
+                        component="button"
+                        onClick={item.onClick}
+                        sx={{
+                          fontWeight: 500,
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: 0,
+                          transition: "all 0.3s ease",
+                          '&:hover': {
+                            color: 'primary.main'
+                          }
+                        }}
+                      >
+                        {item.label}
+                      </Typography>
+                    ) : (
+                      // Otherwise, render a NavLink
+                      <NavLink to={item.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontWeight: 500,
+                            transition: "all 0.3s ease",
+                            '&:hover': {
+                              color: 'primary.main'
+                            }
+                          }}
+                        >
+                          {item.label}
+                        </Typography>
+                      </NavLink>
+                    )}
+                  </Box>
+                ))}
               </Box>
 
-              <Box sx={{ display: 'flex', ml: 4 }}>
-  <Button
+              {/* Login/Signup Buttons */}
+              <Box sx={{ display: 'flex', ml: 2 }}>
+                <Button
     variant="outlined"
     color="primary"
     sx={{
@@ -661,11 +666,11 @@ const navigate = useNavigate();
       }}
       onClick={handleRentResources}
     >
-      Rent Resources
+      Share
     </Button>
   )}
 
-  <Button
+ <Button
     variant="outlined"
     color="error"
     sx={{
@@ -677,7 +682,44 @@ const navigate = useNavigate();
   >
     Logout
   </Button>
-</Box>
+              </Box>
+
+              {/* Hamburger Menu for Mobile */}
+              <IconButton
+                edge="end"
+                color="inherit"
+                aria-label="menu"
+                sx={{ display: { md: 'none' }, ml: 2 }}
+                onClick={() => setDrawerOpen(true)}
+              >
+                <MenuIcon />
+              </IconButton>
+
+              <Drawer
+                anchor="right"
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+              >
+                <List sx={{ width: 200 }}>
+                  {navItems.map((item) => (
+                    <ListItem
+                      button
+                      key={item.label}
+                      onClick={() => {
+                        setDrawerOpen(false);
+                        if (item.onClick) {
+                          item.onClick();
+                        }
+                      }}
+                      component={item.onClick ? 'div' : NavLink}
+                      to={item.onClick ? undefined : item.path}
+                      sx={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      <ListItemText primary={item.label} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Drawer>
             </Toolbar>
           </Container>
         </AppBar>
@@ -791,7 +833,7 @@ const navigate = useNavigate();
           {/* Status Cards */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
             {/* CPU Usage */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item size = {{xs:12, sm:6, md:3}}>
               <Card
                 sx={{
                   p: 2,
@@ -823,7 +865,7 @@ const navigate = useNavigate();
             </Grid>
 
             {/* Memory Usage */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item size = {{xs: 12, sm:6, md: 3}}>
               <Card
                 sx={{
                   p: 2,
@@ -855,7 +897,7 @@ const navigate = useNavigate();
             </Grid>
 
             {/* Network Usage */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item size = {{xs:12, sm:6, md:3}}>
               <Card
                 sx={{
                   p: 2,
@@ -881,7 +923,7 @@ const navigate = useNavigate();
             </Grid>
 
             {/* Storage Usage */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item size = {{xs:12, sm:6, md:3}}>
               <Card
                 sx={{
                   p: 2,
@@ -915,7 +957,7 @@ const navigate = useNavigate();
 
           {/* Worker Node Status and Earnings */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} md={4}>
+            <Grid item size={{xs:12, md:4}}>
               <Card
                 sx={{
                   p: 3,
@@ -983,7 +1025,7 @@ const navigate = useNavigate();
               </Card>
             </Grid>
 
-            <Grid item xs={12} md={8}>
+            <Grid item size={{xs:12, md:8}}>
               <Card
                 sx={{
                   p: 3,
@@ -996,7 +1038,7 @@ const navigate = useNavigate();
                   }
                 }}
               >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                <Box ref = {earnRef} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                   <Typography variant="h6" fontWeight="bold">
                     Earnings Overview
                   </Typography>
@@ -1031,7 +1073,7 @@ const navigate = useNavigate();
                 </Box>
                 <Divider sx={{ my: 2 }} />
                 <Grid container spacing={2}>
-                  <Grid item xs={6} md={3}>
+                  <Grid item size = {{xs:6, md:3}}>
                     <Typography variant="subtitle2" color="text.secondary">
                       Hourly Rate
                     </Typography>
@@ -1039,7 +1081,7 @@ const navigate = useNavigate();
                       $0.25
                     </Typography>
                   </Grid>
-                  <Grid item xs={6} md={3}>
+                  <Grid item size={{xs:6, md:3}}>
                     <Typography variant="subtitle2" color="text.secondary">
                       Uptime
                     </Typography>
@@ -1047,7 +1089,7 @@ const navigate = useNavigate();
                       {formatUptime(uptime)}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6} md={3}>
+                  <Grid item size={{xs:6, md:3}}>
                     <Typography variant="subtitle2" color="text.secondary">
                       Last Payment
                     </Typography>
@@ -1055,7 +1097,7 @@ const navigate = useNavigate();
                       $12.45
                     </Typography>
                   </Grid>
-                  <Grid item xs={6} md={3}>
+                  <Grid item size={{xs:6, md:3}}>
                     <Typography variant="subtitle2" color="text.secondary">
                       Payment Status
                     </Typography>
@@ -1071,7 +1113,7 @@ const navigate = useNavigate();
 
           {/* Performance Graphs */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} md={6}>
+            <Grid item size={{xs:12, md:6}}>
               <Card
                 sx={{
                   p: 3,
@@ -1087,7 +1129,7 @@ const navigate = useNavigate();
                 <Typography variant="h6" fontWeight="bold" gutterBottom>
                   CPU Usage Trend
                 </Typography>
-                <Box sx={{ height: 280 }}>
+                <Box ref = {performRef} sx={{ height: 280 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
                       data={cpuUsageData}
@@ -1129,7 +1171,7 @@ const navigate = useNavigate();
                 </Box>
               </Card>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item size={{xs:12, md:6}}>
               <Card
                 sx={{
                   p: 3,
@@ -1189,7 +1231,7 @@ const navigate = useNavigate();
 
           {/* System Information */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12}>
+            <Grid item size={{xs:12}}>
               <Card
                 sx={{
                   p: 3,
@@ -1205,7 +1247,7 @@ const navigate = useNavigate();
                   System Information
                 </Typography>
                 <Grid container spacing={3} mt={1}>
-                  <Grid item xs={12} sm={6} md={3}>
+                  <Grid item size={{xs: 12, sm:6, md:3}}>
                     <Paper sx={{ p: 2, bgcolor: 'rgba(46, 125, 243, 0.05)' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                         <Memory color="primary" sx={{ mr: 1 }} />
@@ -1224,7 +1266,7 @@ const navigate = useNavigate();
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
+                  <Grid item size={{xs: 12, sm:6, md:3}}>
                     <Paper sx={{ p: 2, bgcolor: 'rgba(46, 125, 243, 0.05)' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                         <Storage color="primary" sx={{ mr: 1 }} />
@@ -1243,7 +1285,7 @@ const navigate = useNavigate();
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
+                  <Grid item size={{xs: 12, sm:6, md:3}}>
                     <Paper sx={{ p: 2, bgcolor: 'rgba(46, 125, 243, 0.05)' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                         <NetworkCheck color="primary" sx={{ mr: 1 }} />
@@ -1262,7 +1304,7 @@ const navigate = useNavigate();
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
+                  <Grid item size={{xs: 12, sm:6, md:3}}>
                     <Paper sx={{ p: 2, bgcolor: 'rgba(46, 125, 243, 0.05)' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                         <DeveloperBoard color="primary" sx={{ mr: 1 }} />
@@ -1288,7 +1330,7 @@ const navigate = useNavigate();
 
           {/* Recent Activity */}
           <Grid container spacing={3}>
-            <Grid item xs={12}>
+            <Grid item size={{xs:12}}>
               <Card
                 sx={{
                   p: 3,

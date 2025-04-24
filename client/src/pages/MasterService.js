@@ -1,5 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef} from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import MenuIcon from '@mui/icons-material/Menu';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import {
   Container,
   Box,
@@ -263,6 +269,16 @@ const MasterService = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [showNodeActivity, setShowNodeActivity] = useState(false);
   const navigate = useNavigate();
+  const jobRef = useRef(null);
+  const nodeRef = useRef(null);
+
+  // State for mobile drawer
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const navItems = [
+    { label: 'Dashboard', path: '/MasterService' },
+    { label: 'Jobs', onClick: () => jobRef.current?.scrollIntoView({ behavior: 'smooth' }) },
+    { label: 'Nodes', onClick: () => nodeRef.current?.scrollIntoView({ behavior: 'smooth' }) }
+  ];
 
 // Handle logout
 const handleLogout = () => {
@@ -515,77 +531,54 @@ const handleLogout = () => {
                 </Typography>
               </Box>
 
-              <Box sx={{ display: 'flex', gap: 3 }}>
-                <NavLink to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontWeight: 700,
-                      color: 'primary.main',
-                      transition: "all 0.3s ease"
-                    }}
-                  >
-                    Dashboard
-                  </Typography>
-                </NavLink>
-                <NavLink to="/jobs" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontWeight: 500,
-                      transition: "all 0.3s ease",
-                      '&:hover': {
-                        color: 'primary.main'
-                      }
-                    }}
-                  >
-                    Jobs
-                  </Typography>
-                </NavLink>
-                <NavLink to="/nodes" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontWeight: 500,
-                      transition: "all 0.3s ease",
-                      '&:hover': {
-                        color: 'primary.main'
-                      }
-                    }}
-                  >
-                    Nodes
-                  </Typography>
-                </NavLink>
-                <NavLink to="/settings" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontWeight: 500,
-                      transition: "all 0.3s ease",
-                      '&:hover': {
-                        color: 'primary.main'
-                      }
-                    }}
-                  >
-                    Settings
-                  </Typography>
-                </NavLink>
+              {/* Desktop Nav Links */}
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
+                {navItems.map((item) => (
+                  <Box key={item.label}>
+                    {item.onClick ? (
+                      // If there's an onClick property, render a button that looks like a link
+                      <Typography
+                        variant="body1"
+                        component="button"
+                        onClick={item.onClick}
+                        sx={{
+                          fontWeight: 500,
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: 0,
+                          transition: "all 0.3s ease",
+                          '&:hover': {
+                            color: 'primary.main'
+                          }
+                        }}
+                      >
+                        {item.label}
+                      </Typography>
+                    ) : (
+                      // Otherwise, render a NavLink
+                      <NavLink to={item.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontWeight: 500,
+                            transition: "all 0.3s ease",
+                            '&:hover': {
+                              color: 'primary.main'
+                            }
+                          }}
+                        >
+                          {item.label}
+                        </Typography>
+                      </NavLink>
+                    )}
+                  </Box>
+                ))}
               </Box>
 
-             <Box sx={{ display: 'flex', ml: 4 }}>
-  <Button
-    variant="outlined"
-    color="primary"
-    sx={{
-      mr: 2,
-      transition: "all 0.3s ease"
-    }}
-    startIcon={<Settings />}
-  >
-    Admin
-  </Button>
-
-  {isJobRunning ? (
+              {/* Login/Signup Buttons */}
+              <Box sx={{ display: 'flex', ml: 2 }}>
+                {isJobRunning ? (
     <Button
       variant="contained"
       color="error"
@@ -617,11 +610,10 @@ const handleLogout = () => {
       }}
       onClick={handleRequestResources}
     >
-      Request Compute
+      Acquire
     </Button>
   )}
-
-  <Button
+ <Button
     variant="outlined"
     color="error"
     sx={{
@@ -633,8 +625,44 @@ const handleLogout = () => {
   >
     Logout
   </Button>
-</Box>
+              </Box>
 
+              {/* Hamburger Menu for Mobile */}
+              <IconButton
+                edge="end"
+                color="inherit"
+                aria-label="menu"
+                sx={{ display: { md: 'none' }, ml: 2 }}
+                onClick={() => setDrawerOpen(true)}
+              >
+                <MenuIcon />
+              </IconButton>
+
+              <Drawer
+                anchor="right"
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+              >
+                <List sx={{ width: 200 }}>
+                  {navItems.map((item) => (
+                    <ListItem
+                      button
+                      key={item.label}
+                      onClick={() => {
+                        setDrawerOpen(false);
+                        if (item.onClick) {
+                          item.onClick();
+                        }
+                      }}
+                      component={item.onClick ? 'div' : NavLink}
+                      to={item.onClick ? undefined : item.path}
+                      sx={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      <ListItemText primary={item.label} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Drawer>
             </Toolbar>
           </Container>
         </AppBar>
@@ -694,7 +722,7 @@ const handleLogout = () => {
           {/* Status Cards */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
             {/* CPU Usage */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item size={{xs:12, sm:6, md:3}}>
               <Card
                 sx={{
                   p: 2,
@@ -720,7 +748,7 @@ const handleLogout = () => {
             </Grid>
 
             {/* Memory Usage */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item size={{xs:12,sm:6, md:3}}>
               <Card
                 sx={{
                   p: 2,
@@ -746,7 +774,7 @@ const handleLogout = () => {
             </Grid>
 
             {/* Network Usage */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item size={{xs:12, sm:6, md: 3}}>
               <Card
                 sx={{
                   p: 2,
@@ -772,7 +800,7 @@ const handleLogout = () => {
             </Grid>
 
             {/* Storage Usage */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item size = {{xs:12, sm:6, md: 3}}>
               <Card
                 sx={{
                   p: 2,
@@ -800,7 +828,7 @@ const handleLogout = () => {
 
           {/* Worker Nodes Status */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} md={4}>
+            <Grid item size = {{xs: 12, md: 4}}>
               <Card
                 sx={{
                   p: 3,
@@ -816,7 +844,7 @@ const handleLogout = () => {
                 <Typography variant="h6" fontWeight="bold" gutterBottom>
                   Worker Nodes Status
                 </Typography>
-                <Box sx={{ height: 280, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Box ref={nodeRef} sx={{ height: 280, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -893,7 +921,7 @@ const handleLogout = () => {
               </Card>
             </Grid>
 
-            <Grid item xs={12} md={8}>
+            <Grid item size = {{xs: 12, md:8}}>
               <Card
                 sx={{
                   p: 3,
@@ -983,7 +1011,7 @@ const handleLogout = () => {
 
           {/* Active Jobs & Connected Nodes */}
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid item size = {{xs: 12, md: 6}}>
               <Card
                 sx={{
                   p: 3,
@@ -996,7 +1024,7 @@ const handleLogout = () => {
                   }
                 }}
               >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Box ref={jobRef} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                   <Typography variant="h6" fontWeight="bold">
                     Recent Jobs
                   </Typography>
@@ -1063,7 +1091,7 @@ const handleLogout = () => {
                 </Box>
               </Card>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item size = {{xs: 12, md:6}}>
               <Card
                 sx={{
                   p: 3,
