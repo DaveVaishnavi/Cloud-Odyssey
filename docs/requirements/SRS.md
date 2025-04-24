@@ -1,95 +1,105 @@
-# Software Requirements Specification (SRS)
+# 📄 Software Requirements Specification (SRS)
 
-## 1. Introduction
+## 🧾 1. Project Overview
 
-### 1.1 Purpose  
-[Describe the purpose of the system and what problem it solves.]
+**Project Name**: Cloud Odyssey  
+**Date**: 28/03/2025  
+**Version**: 1.0
 
-### 1.2 Scope  
-[Outline the major features and functionalities of the system.]
+### 🌟 Abstract
 
-### 1.3 Definitions, Acronyms, and Abbreviations  
-| Term | Definition |
-|------|-----------|
-| [Term] | [Definition] |
-| [Term] | [Definition] |
-
-### 1.4 References  
-- [Project GitHub Repository](<repo_link>)  
-- [Related Documents](<doc_links>)  
+Cloud Odyssey is a high-performance, distributed cloud computing system that leverages idle computational resources in a
+decentralized Beowulf cluster. Designed for executing parallel workloads via secure SSH access, it supports real-time
+scheduling with OpenMPI and SLURM, dynamic worker node orchestration, and robust monitoring through Prometheus and
+Grafana.
 
 ---
 
-## 2. Overall Description  
+## 👥 2. Stakeholders
 
-### 2.1 Product Perspective  
-[Describe how this system fits into a larger context or integrates with other systems.]  
-
-### 2.2 Product Functions  
-[Provide a high-level summary of key functionalities.]  
-
-### 2.3 User Characteristics  
-[Describe the expected user base, their skill levels, and usage behavior.]  
-
-### 2.4 Constraints  
-[List any constraints like hardware, software, or performance limits.]  
-
-### 2.5 Assumptions and Dependencies  
-[Specify any assumptions made and dependencies on external factors.]  
+| Role | Stakeholder |
+|------|-------------|
+| End Users | Researchers, Scientists, Academic Institutions, Enterprises |
+| Development Team | Vaishnavi Virat Dave, Kaashvi Jain, Kajal, Kumud, Abhijna Raghavendra, Anushka Jangid |
+| System Maintainers | Open Source Contributors |
 
 ---
 
-## 3. Functional Requirements  
+## 🧩 3. Functional Requirements
 
-| ID | Requirement Description | Priority |
-|----|-------------------------|----------|
-| FR-1 | [Describe functional requirement] | High |
-| FR-2 | [Describe functional requirement] | Medium |
-
----
-
-## 4. Non-Functional Requirements  
-
-| ID | Requirement | Description |
-|----|------------|------------|
-| NFR-1 | [Scalability] | [Describe requirement] |
-| NFR-2 | [Security] | [Describe requirement] |
+1. ✅ **Secure SSH Login**: Users must authenticate securely into the Master Node.
+2. ⚙️ **Task Scheduling**: SLURM + OpenMPI must be used for scheduling tasks.
+3. 🔁 **Dynamic Node Orchestration**: Worker nodes should self-register/unregister.
+4. 🧠 **Parallel Task Execution**: Computations must utilize parallel processing.
+5. 🔐 **Remote Accessibility**: Enable access behind NAT/firewalls via LocalTunnel/ngrok.
+6. 📈 **System Monitoring**: Integrate Prometheus + Grafana for performance tracking.
 
 ---
 
-## 5. System Features  
+## 📉 4. Non-Functional Requirements
 
-### 5.1 [Feature Name]  
-- **Description**: [Explain the feature]  
-- **Inputs**: [List inputs]  
-- **Processing**: [Describe how it's handled]  
-- **Outputs**: [Expected results]  
-
-### 5.2 [Feature Name]  
-[Repeat the structure for each feature.]  
+1. 🔒 **Security**: All communications must be encrypted (TLS/SSH).
+2. 📈 **Scalability**: The system must scale horizontally across nodes.
+3. ⚡ **Low Footprint**: Worker nodes should consume minimal resources.
+4. 📝 **Logging**: Efficient telemetry for diagnostics and performance analysis.
+5. 🧩 **Modularity**: Microservices architecture with independent deployments.
 
 ---
 
-## 6. External Interface Requirements  
+## 🖥️ 5. System Architecture
 
-### 6.1 User Interfaces  
-[Describe UI components if applicable.]  
-
-### 6.2 Hardware Interfaces  
-[Specify interactions with hardware components if any.]  
-
-### 6.3 Software Interfaces  
-[Describe APIs, database connections, or third-party integrations.]  
-
-### 6.4 Communication Interfaces  
-[Define network protocols, message formats, etc.]  
+- **Master Node**: Central task coordinator with secure SSH access.
+- **Worker Nodes**: Execute parallel tasks and report health metrics.
+- **APIs**: RESTful APIs built using FastAPI and Fiber.
+- **Monitoring Stack**: Prometheus for metrics + Grafana for visualization.
 
 ---
 
-## 7. Other Requirements  
-[Include additional requirements such as compliance, legal, or ethical considerations.]  
+## 🔍 6. Use Case Summary
+
+### 👤 Use Case: Submit Task
+
+**Actors**: User, Scheduler, Master, Worker  
+**Flow**:
+
+1. User logs in → Submits task to Scheduler
+2. Scheduler allocates task → Master coordinates execution
+3. Worker completes job → Results returned to User
+
+### 👤 Use Case: Monitor System
+
+**Actors**: User, Monitoring Service  
+**Flow**:
+
+1. User queries metrics/logs → Monitoring returns visual reports
 
 ---
 
-## 8. Appendices  
-[Add any additional reference materials or diagrams.]  
+## 🛠️ 7. External Dependencies
+
+- **Software**:
+    - OpenMPI, SLURM, OpenSSH, NFS
+    - FastAPI (Python), Fiber (Go), MongoDB, Redis Streams
+    - Prometheus, Grafana, Docker, Docker Compose
+- **Hardware**:
+    - Multi-core processors
+    - Minimum 8GB RAM per node
+    - High-speed networking infrastructure
+
+---
+
+## 🧪 8. Verification Checklist
+
+- [x] Are both functional and non-functional requirements clearly defined?
+- [x] Are security and scalability requirements explicitly stated?
+- [x] Are all technologies and tools listed?
+- [x] Are advantages over commercial cloud providers justified?
+- [x] Is the system designed with modularity and extensibility?
+
+---
+
+## 📌 9. Appendix
+
+- 🔗 [Feasibility Study Report](../assets/PDF/Feasibility%20Study%20Report.pdf)
+- 📋 [Design Document](../assets/PDF/Design%20Document%20.pdf)
+- 💼 [Project Proposal](../assets/PDF/Project%20Proposal.pdf)
