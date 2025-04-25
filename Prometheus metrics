@@ -1,0 +1,47 @@
+Prometheus Metrics to be given on port 9090 on localhost
+
+CPU Metrics
+
+    node_cpu_seconds_total — Total CPU time broken down by mode (user, system, idle, iowait, etc.)
+
+    node_load1, node_load5, node_load15 — System load averages over 1, 5, and 15 minutes
+
+Memory Metrics
+
+    node_memory_MemTotal_bytes
+
+    node_memory_MemAvailable_bytes
+
+    node_memory_Buffers_bytes
+
+    node_memory_Cached_bytes
+
+    node_memory_SwapTotal_bytes
+
+    node_memory_SwapFree_bytes
+
+Disk Metrics
+
+    node_filesystem_size_bytes — Total disk size
+
+    node_filesystem_avail_bytes — Free space available to non-root
+
+    node_disk_read_bytes_total / node_disk_written_bytes_total — Disk I/O
+
+Network Metrics
+
+    node_network_receive_bytes_total
+
+    node_network_transmit_bytes_total
+
+    node_network_up — Whether the interface is up
+
+System Info
+
+    node_time_seconds — System time
+
+    node_boot_time_seconds — Boot time
+
+    node_uname_info — OS details
+
+    node_exporter_build_info — Node Exporter version info
