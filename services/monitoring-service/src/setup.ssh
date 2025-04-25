@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# SETUP SCRIPT FOR MONITORING MASTER NODE ONLY
+# Components: Prometheus, Node Exporter, Grafana
+# Target OS: Ubuntu/Debian-based Linux
+# Note: Run each block one by one, don't copy-paste all at once.
+
+# Step 1: Update packages
+sudo apt update && sudo apt upgrade -y
+
+# Step 2: Create workspace
+mkdir -p ~/monitoring && cd ~/monitoring
+
+# Step 3: Download and extract Prometheus
+curl -LO https://github.com/prometheus/prometheus/releases/latest/download/prometheus-2.51.2.linux-amd64.tar.gz
+tar -xvf prometheus-2.52.0.linux-amd64.tar.gz
+mv prometheus-2.52.0.linux-amd64 prometheus
+cd prometheus
+
+# Step 4: Create basic prometheus.yml
+cat <<EOF > prometheus.yml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['localhost:9100']
+EOF
+
+# Step 5: Run Prometheus
+cd prometheus-2.52.0.linux-amd64
+./prometheus --config.file=prometheus.yml &
+sleep 5
+echo "Prometheus running at http://localhost:9090"
+
+# Step 6: Download and run Node Exporter
+cd ~/monitoring
+curl -LO https://github.com/prometheus/node_exporter/releases/latest/download/node_exporter-1.8.1.linux-amd64.tar.gz
+tar -xvf node_exporter-1.9.1.linux-amd64.tar.gz
+mv node_exporter-1.9.1.linux-amd64 node_exporter
+cd node_exporter
+./node_exporter &
+sleep 5
+echo "Node Exporter running at http://localhost:9100/metrics"
+
+# Step 7: Install Grafana
+sudo apt install -y apt-transport-https software-properties-common wget
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+sudo apt update
+sudo apt install -y grafana
+
+# Step 8: Start and enable Grafana
+sudo systemctl start grafana-server
+sudo systemctl enable grafana-server
+echo "Grafana running at http://localhost:3000 (default: admin/admin)"
+
+# Final Notes
+echo ""
+echo "✅ Master Monitoring Stack is Set Up:"
+echo "- Prometheus: http://localhost:9090"
+echo "- Node Exporter: http://localhost:9100/metrics"
+echo "- Grafana: http://localhost:3000"
