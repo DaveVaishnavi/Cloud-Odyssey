@@ -14,6 +14,7 @@
 - [🚀 Usage](#-usage)
 - [📊 Monitoring & Logging](#-monitoring--logging)
 - [🛠️ Architecture](#-architecture)
+- [🛠️ Techstack](#-techstack)
 - [🖼️ Snapshots](#-snapshots)
 - [📘️ Resources & References](#-resources--references)
 - [🤝 Contributing](#-contributing)
@@ -114,13 +115,38 @@ ssh user@master-node-ip
 
 The system is split into five key microservices:
 
-- **Frontend**: React + Material UI + WebSockets
-- **Node Manager**: Go + MongoDB + gRPC/REST APIs
-- **Task Scheduler**: Python + FastAPI + Redis Streams
-- **SSH Manager**: Python + FastAPI + LocalTunnel
-- **Database Layer**: PostgreSQL, Redis, MongoDB
-
 ![Microservices Architecture](https://github.com/user-attachments/assets/11cc80e0-a360-41e7-92d4-26dd3b139d7b)
+
+---
+
+# 💻 Techstack
+
+- **Frontend**:  
+  ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black) 
+  ![Material UI](https://img.shields.io/badge/Material--UI-0081CB?style=for-the-badge&logo=mui&logoColor=white) 
+  ![WebSocket](https://img.shields.io/badge/WebSocket-3A3A3A?style=for-the-badge&logo=websocket&logoColor=white)
+
+- **Node Manager**:  
+  ![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white) 
+  ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white) 
+  ![gRPC](https://img.shields.io/badge/gRPC-4285F4?style=for-the-badge&logo=grpc&logoColor=white) 
+  ![REST](https://img.shields.io/badge/REST-02569B?style=for-the-badge&logo=rest&logoColor=white)
+
+- **Task Scheduler**:  
+  ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) 
+  ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white) 
+  ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+
+- **SSH Manager**:  
+  ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) 
+  ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white) 
+  ![LocalTunnel](https://img.shields.io/badge/LocalTunnel-000000?style=for-the-badge&logo=localtunnel&logoColor=white)
+
+- **Database Layer**:  
+  ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white) 
+  ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white) 
+  ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+
 
 ---
 
@@ -145,14 +171,16 @@ The system is split into five key microservices:
   
   ![Use Cases](https://github.com/user-attachments/assets/f67cd4f5-0c4d-4625-b472-3fb680e2a3f5)
 
-</details>
-
-<details>
-  <summary><strong>👤 Authentication</strong></summary>
 
 - Team Modal
   
   ![Team Modal](https://github.com/user-attachments/assets/fe35e0a3-64d4-4c04-8fd0-58312a15c5ca)
+  
+
+</details>
+
+<details>
+  <summary><strong>👤 Authentication</strong></summary>
 
 - Register Page
   
@@ -247,7 +275,8 @@ The system is split into five key microservices:
 
 - MongoDB Compass View
 
-  ![MongoDB View](https://github.com/user-attachments/assets/bd0b93e8-f51b-44be-9ffc-823bce990b27)
+  ![MongoDB view](https://github.com/user-attachments/assets/138bb1a1-9afc-40f2-8b52-b6396dc86179)
+
 
 </details>
 
